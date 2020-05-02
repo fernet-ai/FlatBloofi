@@ -19,9 +19,11 @@
  typedef struct bitset_s bitset_t;
 
  // AGGIUNTO da Fernet
+void bitset_resize2( bitset_t *bitset,  size_t newarraysize);
 int nextSetBit2(const bitset_t *bitset, int i);
 int nextUnSetBit(const bitset_t *bitset, int i);
 int get_length(const bitset_t *bitset);
+void bitset_set2(bitset_t *bitset, size_t i);
 
 
 
@@ -104,6 +106,17 @@ static inline void bitset_set(bitset_t *bitset,  size_t i ) {
   }
   bitset->array[shiftedi] |= ((uint64_t)1) << (i % 64);
 }
+
+
+
+
+
+
+
+
+
+
+
 
 /* Set the ith bit to the specified value. Attempts to resize the bitset if needed (may silently fail) */
 static inline void bitset_set_to_value(bitset_t *bitset,  size_t i, bool flag) {

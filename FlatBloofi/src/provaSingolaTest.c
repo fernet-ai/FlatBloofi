@@ -3,13 +3,13 @@
 #include "flatBloofi.h"
 #include <string.h>
 
-int numcrifre(int n);
-char* concatena(char* str, int i);
+int numcrifre2(int n);
+char* concatena2(char* str, int i);
 
-int main2(void) {
+int main(void) {
 	setbuf(stdout, NULL);
 
-	puts("******* FLAT BLOOFI  C *******");
+	puts("******* FLAT BLOOFI SINGOLO  C *******");
 	/*
 	 * NB: il numero di funzioni hash deve essere generato in funzione della probabilità
 	 * di falsi positivi
@@ -24,15 +24,10 @@ int main2(void) {
 
     //Setto i parametri
     int expectedNbElemInFilter = 10000; //Numero di parole che dovrebbe contenere il bloom filter
-	double falsePosProb = 0.01;  //setto la probabilità di falsi positivi
+	double falsePosProb = 0.20;  //setto la probabilità di falsi positivi
     int metric = 1;// metrica di confronto tra Bloom filters. Assume valore 1 se la metrica utilizzata è di Hamming, 2 se di Jaccard, 3 se di Cosine;
 
 
-
-    int counter = 0;
-
-	// 190x4 bloom filter sono quasi 12 flat...
-	for(int j = 0; j <40; j++){
 
 		//Creo una lista dove metterò il bloom filter
 		list bfList = NULL;
@@ -65,17 +60,17 @@ int main2(void) {
 		 for(int i = 0; i <5000; i++) {
 
 
-			bloom_add(bf,concatena("Gatto", i));
-			bloom_add(bf,concatena("cane", i));
+			bloom_add(bf,concatena2("Gatto", i));
+			bloom_add(bf,concatena2("cane", i));
 
-			bloom_add(bf2, concatena("pappagallo", i));
-			bloom_add(bf2,concatena("bimbo", i));
-			bloom_add(bf2,concatena("aldrovandi", i));
+			bloom_add(bf2, concatena2("pappagallo", i));
+			bloom_add(bf2,concatena2("bimbo", i));
+			bloom_add(bf2,concatena2("aldrovandi", i));
 
-			bloom_add(bf3,concatena("pentola", i));
-			bloom_add(bf3,concatena("forchetta", i));
+			bloom_add(bf3,concatena2("pentola", i));
+			bloom_add(bf3,concatena2("forchetta", i));
 
-			bloom_add(bf4,concatena("pc", i));
+			bloom_add(bf4,concatena2("pc", i));
 		 }
 
 
@@ -85,18 +80,14 @@ int main2(void) {
 		for(int i = 0; i < bfList->size; i++){
 			current = getElement(bfList,i);
 			insertBloomFilter(bl,current);
-			counter++;
 		 }
 
-	}
 
-
-	printf("\n Numero di bloom aggiunti: %d\n", counter);
 
 	printf("\nSto cercando la parola ...");
 
     // Cerco una parola... in che bloom filter/bloom filters  si trova/trovano?
-	int* idbloom = search(bl, "forchetta4");
+	int* idbloom = search(bl, "pentola321");
 	/*while(*idbloom != -1){ // 0 non è un valore valido
 		printf("\nla parola si trova nel bloom filter con id: %d\n", *idbloom);
 		idbloom++;
@@ -110,8 +101,7 @@ int main2(void) {
 
 
 
-
-int numcrifre(int n)
+int numcrifre2(int n)
 {
 int i=1;
 
@@ -128,7 +118,7 @@ return i;
 
 
 
-char* concatena(char* str, int i){
+char* concatena2(char* str, int i){
 
 	int size = strlen(str)+ numcrifre(i)+1;
 

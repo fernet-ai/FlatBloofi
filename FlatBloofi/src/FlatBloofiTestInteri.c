@@ -1,15 +1,21 @@
+/*
+ * FlatBloofiTestInteri.c
+
+ *
+ *  Created on: 30/apr/2020
+ *      Author: fernet
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "flatBloofi.h"
 #include <string.h>
 
-int numcrifre(int n);
-char* concatena(char* str, int i);
 
-int main2(void) {
+int main3(void) {
 	setbuf(stdout, NULL);
 
-	puts("******* FLAT BLOOFI  C *******");
+	puts("******* FLAT BLOOFI  C SU INTERI *******");
 	/*
 	 * NB: il numero di funzioni hash deve essere generato in funzione della probabilità
 	 * di falsi positivi
@@ -30,14 +36,12 @@ int main2(void) {
 
 
     int counter = 0;
+	//Creo una lista dove metterò il bloom filter
+	list bfList = NULL;
+	bfList = newList();
 
 	// 190x4 bloom filter sono quasi 12 flat...
-	for(int j = 0; j <40; j++){
-
-		//Creo una lista dove metterò il bloom filter
-		list bfList = NULL;
-		bfList = newList();
-
+	for(int j = 0; j < 54; j++){
 		// Creao un po' di bloom filter
 		struct bloom* bf;
 		bf = malloc(sizeof(struct bloom));
@@ -56,39 +60,46 @@ int main2(void) {
 		bloom_init(bf4, expectedNbElemInFilter,falsePosProb,metric,h);
 
 
-		bfList=insertElement(bfList,bf); //Inserimento del bf nella lista
-		bfList=insertElement(bfList,bf2); //Inserimento del bf nella lista
-		bfList=insertElement(bfList,bf3); //Inserimento del bf nella lista
-		bfList=insertElement(bfList,bf4); //Inserimento del bf nella lista
-
-
 		 for(int i = 0; i <5000; i++) {
 
+			int num = 11;
+			int num2 = 111;
+			int num3 = 22;
+			int num4 = 222;
+			int num5 = 2222;
+			int num6 = 33;
+			int num7 = 333;
+			int num8 = 44;
 
-			bloom_add(bf,concatena("Gatto", i));
-			bloom_add(bf,concatena("cane", i));
+			bloom_add(bf, &num);
+			bloom_add(bf,&num2);
 
-			bloom_add(bf2, concatena("pappagallo", i));
-			bloom_add(bf2,concatena("bimbo", i));
-			bloom_add(bf2,concatena("aldrovandi", i));
+			bloom_add(bf2, &num3);
+			bloom_add(bf2,&num4);
+			bloom_add(bf2,&num5);
 
-			bloom_add(bf3,concatena("pentola", i));
-			bloom_add(bf3,concatena("forchetta", i));
+			bloom_add(bf3,&num6);
+			bloom_add(bf3,&num7);
 
-			bloom_add(bf4,concatena("pc", i));
+			bloom_add(bf4, &num8);
+
 		 }
-
-
-		struct bloom* current = NULL; // bloom filter di appoggio
-
-		// Per ogni bloom filter nella lista, lo inserisco nel FLAT BLOOFI j-esimo
-		for(int i = 0; i < bfList->size; i++){
-			current = getElement(bfList,i);
-			insertBloomFilter(bl,current);
-			counter++;
-		 }
+			bfList=insertElement(bfList,bf); //Inserimento del bf nella lista
+			bfList=insertElement(bfList,bf2); //Inserimento del bf nella lista
+			bfList=insertElement(bfList,bf3); //Inserimento del bf nella lista
+			bfList=insertElement(bfList,bf4); //Inserimento del bf nella lista
 
 	}
+
+
+	struct bloom* current = NULL; // bloom filter di appoggio
+
+	// Per ogni bloom filter nella lista, lo inserisco nel FLAT BLOOFI j-esimo
+	for(int i = 0; i < bfList->size; i++){
+		current = getElement(bfList,i);
+		insertBloomFilter(bl,current);
+		counter++;
+	 }
 
 
 	printf("\n Numero di bloom aggiunti: %d\n", counter);
@@ -96,7 +107,8 @@ int main2(void) {
 	printf("\nSto cercando la parola ...");
 
     // Cerco una parola... in che bloom filter/bloom filters  si trova/trovano?
-	int* idbloom = search(bl, "forchetta4");
+	int parolacercata = 33;
+	int* idbloom = search(bl, &parolacercata);
 	/*while(*idbloom != -1){ // 0 non è un valore valido
 		printf("\nla parola si trova nel bloom filter con id: %d\n", *idbloom);
 		idbloom++;
@@ -111,31 +123,7 @@ int main2(void) {
 
 
 
-int numcrifre(int n)
-{
-int i=1;
-
-if(n==0) return 0;
-
-   while(n>10)
-   {
-      n/=10;
-      i++;
-   }
-
-return i;
-}
 
 
 
-char* concatena(char* str, int i){
 
-	int size = strlen(str)+ numcrifre(i)+1;
-
-	char *temp = calloc( size+1, sizeof(char));
-	sprintf(temp, "%s%d", str, i);
-
-	temp[size] = '\0';
-
-	return temp;
-}

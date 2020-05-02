@@ -8,7 +8,7 @@
 #include "bloom.h"
 #include "list.h"
 #include "hashtable.h"
-#define SIZE 10000
+#define SIZE 10000// PUO ESSERE UN VINCOLO
 #ifndef FLATBLOOFI_H_
 #define FLATBLOOFI_H_
 

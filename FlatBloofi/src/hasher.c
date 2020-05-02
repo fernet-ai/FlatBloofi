@@ -64,13 +64,13 @@ void setNumberOfRandomKeys(struct hasher* h,int K){
  */
 int int_rand(int min,int max){
 
- int numero_casuale;
- int differenza;
- differenza = (max - min) + 1;
- srand(clock());
- numero_casuale = rand() % differenza ;
- numero_casuale = numero_casuale + min ;
- return numero_casuale;
+	 int numero_casuale;
+	 int differenza;
+	 differenza = (max - min) + 1;
+	 srand(time(NULL));
+	 numero_casuale = rand() % differenza ;
+	 numero_casuale = numero_casuale + min ;
+	 return numero_casuale;
 }
 
 

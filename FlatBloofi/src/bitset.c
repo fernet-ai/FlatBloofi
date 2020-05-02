@@ -35,18 +35,23 @@ int nextUnSetBit(const bitset_t *bitset, int i) {
     uint64_t w = ~ bitset->array[x];
     w >>= (i & 63);
     if (w != 0) {
-    	return i += __builtin_ctzll(w);
+    	int mh = i += __builtin_ctzll(w);
+    	return mh;
     }
 
-    x ++;
+    ++x;
 
-    while (x < bitset->arraysize) {
+    for(; x < bitset->arraysize; ++x) {
+     //printf("x=%d   datalengh:%d\n", x, bitset->arraysize);
       w = bitset->array[x];
-      if (w != 0) {
-        return i = x * 64 + __builtin_ctzll(w);
+      if (w != ~0) {
+    	  //printBits(sizeof(uint64_t), &w);
+          return i = x * 64 + __builtin_ctzll(~w);
       }
-      x ++;
     }
+
+    printf("pigliati sto '-1'!  ");
+
     return -1;
 }
 
@@ -250,6 +255,24 @@ bool bitset_resize( bitset_t *bitset,  size_t newarraysize, bool padwithzeroes )
   bitset->arraysize = newarraysize;
   return true; // success!
 }
+
+// FATTA DA FERNET
+void bitset_resize2( bitset_t *bitset,  size_t newarraysize) {
+	bitset->array = (uint64_t *) realloc(bitset->array, sizeof(uint64_t) * ((newarraysize+63)/64));
+
+}
+
+
+//FERNET
+void bitset_set2(bitset_t *bitset,  size_t i ) {
+	int index = i/64;
+	 uint64_t * vettore = 	bitset->array;
+	 *(vettore+index) |= (1l << (i % 64));
+}
+
+
+
+
 
 
 

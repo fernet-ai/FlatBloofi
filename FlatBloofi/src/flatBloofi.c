@@ -26,23 +26,21 @@ struct flatbloofi* flat_bloom_filter_index(){
 void insertBloomFilter(struct flatbloofi *bl,struct bloom *b){
 
 	if(bl->h != NULL){
-		if(b->h != NULL)
-			printf("Stai usando più di un hasher, mmmh\n");
+		if(b->h != NULL);
+			//printf("Stai usando più di un hasher, mmmh\n");
 	}
 	else bl->h = b->h;
 
 	int i = nextUnSetBit(bl->busy, 0);
-
+	printf("\nvalore di i: %d\n ", i);
 	if (i < 0) {
-
         i = bitset_size_in_bits(bl->busy);
-
-        bitset_resize(bl->busy, i+64, false);
+        printf(" i: è diventato %d;  ", i);
+        printf("operazione di resize o.o !!!\n");
+        bitset_resize2(bl->busy, i+64);
 
         int capienza = get_length(b->b);
         uint64_t *arraydilong = calloc(capienza, sizeof(uint64_t));
-
-
         insertElementDim(bl->buffer, arraydilong, capienza);
 
         /*come si dovrebbe gettare un array lungo...
@@ -66,7 +64,6 @@ void insertBloomFilter(struct flatbloofi *bl,struct bloom *b){
 	insert(bl->idMap, idBloomFilterNew, i);
 	bitset_set(bl->busy, i);
 
-
 }
 
 
@@ -74,46 +71,49 @@ int* search(struct flatbloofi*bl, const void*o){
 
 	int *answer = calloc(500, sizeof(int)); //da migliorare .. mi ritorna max 500 id
 
+	//printf("numero di flat(array di long): %d", getSize(bl->buffer));
+
 	for (int i = 0; i < getSize(bl->buffer); ++i) {
 
-		printf("nel flat %d ...\n", i);
+		printf("\nnel flat %d ...\n", i);
 
 		uint64_t w = ~0l; // set tutti i bit al contrario, quindi setta 64 bit a 1
 
-
-
 		//prendo un bloom a caso x sapere il num di funzioni hash..
 		for(int l = 0; l <  bl->h->numdichiavi; ++l){
-
 			int hashvalue = (int) hash( bl->h, o, l);
-			printf("l'hash #%d  sull'elemento %s  mi ritorna l'indice %d\n",l, o, hashvalue);
+			//printf("l'hash #%d  sull'elemento %s  mi ritorna l'indice %d\n",l, o, hashvalue);
 
 
 			struct nodeList_withSize *nodoDiLong= getNodeElementDim(bl->buffer, i ); // torna un array i-esimo di long
+			//printf("\nvalore di w =");
+			//printBits(sizeof(w), &w);
 
+			//printf(" poi and con ");
+			//printBits(sizeof(nodoDiLong->array[hashvalue]), &nodoDiLong->array[hashvalue]);
             w &=  (uint64_t) nodoDiLong->array[hashvalue];
 
-			printf("\nnvalore di w =");
-			printBits(sizeof(w), &w);
-
 		}
+
+		//printf("\nvalore finale di w =");
+		//printBits(sizeof(w), &w);
 
 		int counter = 0;
         while (w != 0) {
         	uint64_t t = w & -w; // torna solo un bit a 1 un una data posizione
-        	printf("t= %lu in binario:", t);
-        	printBits(sizeof(t), &t);
+        	//printf("\nt= %lu in binario:", t);
+        	//printBits(sizeof(t), &t);
         	//Inserisci gli id dei bloom filter che hanno la parola cercata
         	int indexbloom = getElement(bl->fromindextoId, i * 64 +  __builtin_popcountll(t-1));
 
-        	//printf("counter: %d la parola si trova nel bloom filter con id: %d",counter, indexbloom);
+        	printf("la parola si trova nel bloom filter con id: %d\n",indexbloom);
 
         	answer[counter] = indexbloom;
 
         	w ^= t;  // XOR si salva in w lo XOR bit a bit tra w e t --> dà 1 se i bit sono diversi
         	counter++;
         }
-        answer[counter+1] = -1; // mi servirà per far capire che sono finiti gli id  e quello di prima era l'ultimo
+        answer[counter] = -1; // mi servirà per far capire che sono finiti gli id  e quello di prima era l'ultimo
 
 
 	}
@@ -122,24 +122,27 @@ int* search(struct flatbloofi*bl, const void*o){
 
 
 void setBloomAt(struct flatbloofi*bl, int i, bitset_t *bitset) {
-	puts("SetBLoomAt");
+	//printf("SetBloomAt");
 
 	struct nodeList_withSize *nodo= getNodeElementDim(bl->buffer, i >> 6);// torna un array di long
 //	for(int i =0; i< 1024; i++) printf(" %d ", nodo->array[i]);
 	//puts("");
-	uint64_t*mybuffer = nodo->array;
+	uint64_t* mybuffer = nodo->array;  //ricorda che a quel punto buffer quando si riempirà agisce per riferimento e non per valore(copia)
+
 
     if(get_length(bitset)!= nodo->dim){//Confronta le lunghezza
     	puts("C'è qualcosa che non va ...");
     }
 
-   uint64_t mask = (1l << i);
-   printf("k = %d\n", nextSetBit2(bitset,0));
+   uint64_t mask = (1l << i);//è prima 1 poi 10, 100, 1000 ...
+   //printf("k = %d\n", nextSetBit2(bitset,0));
 
     for (int k = nextSetBit2(bitset, 0); k >= 0; k = nextSetBit2(bitset, k+1)) {
-        //printf("mybuffer ORato  ");
-        //printBits(sizeof(uint64_t),mybuffer+k);
-    	mybuffer[k] |= mask;
+
+    	mybuffer[k] |= mask; //le modifiche di array[k] avvengono per davvero
+
+
+
     }
 
 }
@@ -159,6 +162,6 @@ void printBits(size_t const size, void const * const ptr)
             printf("%u", byte);
         }
     }
-    puts("");
+    //puts("");
 }
 
