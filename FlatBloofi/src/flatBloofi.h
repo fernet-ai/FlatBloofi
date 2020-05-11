@@ -8,7 +8,7 @@
 #include "bloom.h"
 #include "list.h"
 #include "hashtable.h"
-#define SIZE 10000// PUO ESSERE UN VINCOLO
+#define SIZE 1000000// PUO ESSERE UN VINCOLO
 #ifndef FLATBLOOFI_H_
 #define FLATBLOOFI_H_
 
@@ -31,8 +31,9 @@ void printBits(size_t const size, void const * const ptr);
 struct flatbloofi* flat_bloom_filter_index();
 void insertBloomFilter(struct flatbloofi *bl,struct bloom *b);
 int* search(struct flatbloofi*bl,const void*o);
+void deleteBloomFromIndex(struct flatbloofi *bl, int i);
 void setBloomAt(struct flatbloofi*bl, int i, bitset_t *bitset);
-
-
+void clearBloomAt(struct flatbloofi*bl, int i);
+void updateIndex(struct flatbloofi *bl,struct bloom *b);
 
 #endif /* FLATBLOOFI_H_ */

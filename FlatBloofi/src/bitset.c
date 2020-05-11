@@ -20,6 +20,11 @@ bitset_t *bitset_create() {
 }
 
 
+// Aggiunto da Fernet
+size_t getWord(const bitset_t *bitset, int i){
+
+	return bitset->array[i];
+}
 
 // AGGIUNTO da Fernet
 int nextUnSetBit(const bitset_t *bitset, int i) {
@@ -50,10 +55,18 @@ int nextUnSetBit(const bitset_t *bitset, int i) {
       }
     }
 
-    printf("pigliati sto '-1'!  ");
 
     return -1;
 }
+
+
+//Aggiunto da Fernet
+void bitset_unset(bitset_t *bitset, size_t i){
+	 bitset->array[i/64]  &= ~(1l << (i % 64));
+}
+
+
+
 
 
 //Aggiunto da fernet

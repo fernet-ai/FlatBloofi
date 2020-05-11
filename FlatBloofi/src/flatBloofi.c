@@ -32,11 +32,11 @@ void insertBloomFilter(struct flatbloofi *bl,struct bloom *b){
 	else bl->h = b->h;
 
 	int i = nextUnSetBit(bl->busy, 0);
-	printf("\nvalore di i: %d\n ", i);
+	//printf("\nvalore di i: %d\n ", i);
 	if (i < 0) {
         i = bitset_size_in_bits(bl->busy);
-        printf(" i: è diventato %d;  ", i);
-        printf("operazione di resize o.o !!!\n");
+       // printf(" i: è diventato %d;  ", i);
+        //printf("operazione di resize o.o !!!\n");
         bitset_resize2(bl->busy, i+64);
 
         int capienza = get_length(b->b);
@@ -67,6 +67,43 @@ void insertBloomFilter(struct flatbloofi *bl,struct bloom *b){
 }
 
 
+
+
+void deleteBloomFromIndex(struct flatbloofi *bl, int ia){
+	int i=  ia-1; //perchè il conteggio prima partiva da 0
+	delete(bl->idMap, i);
+	bitset_unset(bl, i);
+
+	if(getWord(bl, i/64) == 0){//se è il primo del proprio flat..
+		//printf("AL LIMITE PROPRIO\n");
+        for (int k = i/ 64 * 64; k <  i/ 64 * 64 + 64; ++k)
+           deleteElementByIndex(bl->fromindextoId, k);
+
+        deleteElementByIndex(bl->buffer, i/64);
+        for(int j=0; j< SIZE; j++){
+        	int data = searchHash(bl->idMap, j);
+        	if(data/64 >= i/64)
+        		insert(bl->idMap,j, data-64 );
+        }
+	}
+	else{
+		 clearBloomAt(bl,i);
+	}
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 int* search(struct flatbloofi*bl, const void*o){
 
 	int *answer = calloc(500, sizeof(int)); //da migliorare .. mi ritorna max 500 id
@@ -75,7 +112,7 @@ int* search(struct flatbloofi*bl, const void*o){
 
 	for (int i = 0; i < getSize(bl->buffer); ++i) {
 
-		printf("\nnel flat %d ...\n", i);
+		//printf("\nnel flat %d ...\n", i);
 
 		uint64_t w = ~0l; // set tutti i bit al contrario, quindi setta 64 bit a 1
 
@@ -106,7 +143,7 @@ int* search(struct flatbloofi*bl, const void*o){
         	//Inserisci gli id dei bloom filter che hanno la parola cercata
         	int indexbloom = getElement(bl->fromindextoId, i * 64 +  __builtin_popcountll(t-1));
 
-        	printf("la parola si trova nel bloom filter con id: %d\n",indexbloom);
+            printf("la parola si trova nel bloom filter con id: %d\n",indexbloom);
 
         	answer[counter] = indexbloom;
 
@@ -121,12 +158,25 @@ int* search(struct flatbloofi*bl, const void*o){
 }
 
 
+
+
+//UPDATE
+void updateIndex(struct flatbloofi *bl,struct bloom *b){
+
+	if(bl->h != NULL){
+		if(b->h != NULL);
+			//printf("Stai usando più di un hasher, mmmh\n");
+	}
+	else bl->h = b->h;
+	setBloomAt(bl, bl->idMap[b->id] , b->b);
+
+}
+
+
 void setBloomAt(struct flatbloofi*bl, int i, bitset_t *bitset) {
 	//printf("SetBloomAt");
 
 	struct nodeList_withSize *nodo= getNodeElementDim(bl->buffer, i >> 6);// torna un array di long
-//	for(int i =0; i< 1024; i++) printf(" %d ", nodo->array[i]);
-	//puts("");
 	uint64_t* mybuffer = nodo->array;  //ricorda che a quel punto buffer quando si riempirà agisce per riferimento e non per valore(copia)
 
 
@@ -146,6 +196,24 @@ void setBloomAt(struct flatbloofi*bl, int i, bitset_t *bitset) {
     }
 
 }
+
+
+
+void clearBloomAt(struct flatbloofi*bl, int i){
+
+	struct nodeList_withSize *nodo= getNodeElementDim(bl->buffer, i >> 6);// torna un array di long
+	uint64_t* mybuffer = nodo->array;  //ricorda che a quel punto buffer quando si riempirà agisce per riferimento e non per valore(copia)
+	uint64_t mask = ~(1l << i);
+
+	//printf("\nlunghezza del buffer aggiornata:%d", nodo->dim);
+
+    for (int k = 0; k < nodo->dim; ++k) {
+        mybuffer[k] &= mask;
+    }
+
+}
+
+
 
 
 void printBits(size_t const size, void const * const ptr)

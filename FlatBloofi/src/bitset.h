@@ -24,6 +24,8 @@ int nextSetBit2(const bitset_t *bitset, int i);
 int nextUnSetBit(const bitset_t *bitset, int i);
 int get_length(const bitset_t *bitset);
 void bitset_set2(bitset_t *bitset, size_t i);
+void bitset_unset(bitset_t *bitset, size_t i);
+size_t getWord(const bitset_t *bitset, int i);
 
 
 

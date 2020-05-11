@@ -4,7 +4,7 @@
 #include <stdbool.h>
 
 //dimensione dell'hashTable
-#define SIZE 10000
+#define SIZE 1000000 //Può essere un vincolo
 
 struct DataItem {
    int data;

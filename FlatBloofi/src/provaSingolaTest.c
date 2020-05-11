@@ -24,7 +24,7 @@ int main(void) {
 
     //Setto i parametri
     int expectedNbElemInFilter = 10000; //Numero di parole che dovrebbe contenere il bloom filter
-	double falsePosProb = 0.20;  //setto la probabilità di falsi positivi
+	double falsePosProb = 0.01;  //setto la probabilità di falsi positivi
     int metric = 1;// metrica di confronto tra Bloom filters. Assume valore 1 se la metrica utilizzata è di Hamming, 2 se di Jaccard, 3 se di Cosine;
 
 
@@ -57,7 +57,7 @@ int main(void) {
 		bfList=insertElement(bfList,bf4); //Inserimento del bf nella lista
 
 
-		 for(int i = 0; i <5000; i++) {
+		 for(int i = 0; i <1; i++) {
 
 
 			bloom_add(bf,concatena2("Gatto", i));
@@ -83,15 +83,65 @@ int main(void) {
 		 }
 
 
+		//aggiorno un bloom filter con un nuovo valore
+	   current=getElement(bfList,2);
+	   bloom_add(current, "lupo"); //così modifico il bitset del bloom in modo da modificarne il bitset
+	   updateIndex(bl,current);
+
+	    // Cerco una parola... in che bloom filter/bloom filters  si trova/trovano?
+	   search(bl, "lupo");
+
+
 
 	printf("\nSto cercando la parola ...");
 
     // Cerco una parola... in che bloom filter/bloom filters  si trova/trovano?
-	int* idbloom = search(bl, "pentola321");
+	int* idbloom = search(bl, "aldrovandi0");
 	/*while(*idbloom != -1){ // 0 non è un valore valido
 		printf("\nla parola si trova nel bloom filter con id: %d\n", *idbloom);
 		idbloom++;
 	}*/
+
+	int index = 2;
+	printf("\n\n Ora cancello il bloom filter con id %d ...", index);
+	// CANCELLO Bloom filter
+	deleteBloomFromIndex(bl, index);  //Parte da 0 l'indicizzazione?
+
+
+	printf("\nCerco le parole..\n");
+    char* parolacercata = "Gatto0";
+	printf("\ncerco la parola %s\n", parolacercata);
+	search(bl, parolacercata);
+
+    char* parolacercata2= "cane0";
+	printf("\ncerco la parola %s\n", parolacercata2);
+	search(bl, parolacercata2);
+
+    char* parolacercata3 = "pappagallo0";
+	printf("\ncerco la parola %s\n", parolacercata3);
+	search(bl, parolacercata3);
+
+    char* parolacercata4 = "bimbo0";
+	printf("\ncerco la parola %s\n", parolacercata4);
+	search(bl, parolacercata4);
+
+	char* parolacercata5 = "aldrovandi0";
+	printf("\ncerco la parola %s\n", parolacercata5);
+	search(bl, parolacercata5);
+
+    char* parolacercata6 = "pentola0";
+	printf("\ncerco la parola %s\n", parolacercata6);
+    search(bl, parolacercata6);
+
+    char* parolacercata7 = "forchetta0";
+	printf("\ncerco la parola %s\n", parolacercata7);
+    search(bl, parolacercata7);
+
+    char* parolacercata8 = "pc0";
+	printf("\ncerco la parola %s\n", parolacercata8);
+	search(bl, parolacercata8);
+
+	puts("END");
 
 
 	free(bl);

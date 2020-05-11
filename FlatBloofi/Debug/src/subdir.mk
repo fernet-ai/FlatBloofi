@@ -6,6 +6,7 @@
 C_SRCS += \
 ../src/FlatBloofiTest.c \
 ../src/FlatBloofiTestInteri.c \
+../src/TestFlatBloomFilter.c \
 ../src/bitset.c \
 ../src/bloom.c \
 ../src/flatBloofi.c \
@@ -17,6 +18,7 @@ C_SRCS += \
 OBJS += \
 ./src/FlatBloofiTest.o \
 ./src/FlatBloofiTestInteri.o \
+./src/TestFlatBloomFilter.o \
 ./src/bitset.o \
 ./src/bloom.o \
 ./src/flatBloofi.o \
@@ -28,6 +30,7 @@ OBJS += \
 C_DEPS += \
 ./src/FlatBloofiTest.d \
 ./src/FlatBloofiTestInteri.d \
+./src/TestFlatBloomFilter.d \
 ./src/bitset.d \
 ./src/bloom.d \
 ./src/flatBloofi.d \
